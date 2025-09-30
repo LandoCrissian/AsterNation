@@ -36,6 +36,8 @@
   <!-- Firebase (compat builds) -->
   <script defer src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/controls/OrbitControls.js"></script>
 
   <style>
     :root{
@@ -128,16 +130,12 @@
     </section>
 
     <section class="container">
-      <div class="card">
-        <h3>Your Star Pass</h3>
-        <div id="passport" class="passport" style="display:none;">
-          <div class="info">
-            <b>Aster Star Pass <span id="passport-serial">#000000</span></b>
-            <small><span id="passport-nick">—</span> — <span id="passport-star">—</span> <span id="passport-address" class="chip">—</span></small>
-          </div>
-        </div>
-      </div>
-    </section>
+  <div class="card">
+    <h3>Galaxy Explorer</h3>
+    <canvas id="galaxyCanvas" style="width:100%;height:500px;display:block;border-radius:14px;border:1px solid var(--line);"></canvas>
+    <p style="color:var(--muted);margin-top:8px;">Explore the stars. Click a galaxy to join its constellation.</p>
+  </div>
+</section>
   </main>
 
   <footer class="footer"><div class="container"><small>© <span id="year"></span> Aster Nation — Nations Among the Stars</small></div></footer>
@@ -184,6 +182,98 @@
         document.getElementById('passport-nick').textContent="Astronaut";
       };
     });
-  </script>
+    
+  // === THREE.JS GALAXY SCENE ===
+  let scene, camera, renderer, controls, raycaster, mouse;
+  let clusters = [];
+
+  function initGalaxy() {
+    const canvas = document.getElementById("galaxyCanvas");
+    scene = new THREE.Scene();
+
+    // Camera
+    camera = new THREE.PerspectiveCamera(60, canvas.clientWidth / canvas.clientHeight, 0.1, 2000);
+    camera.position.z = 400;
+
+    // Renderer
+    renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+    renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    // Controls
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    // Starfield
+    const stars = new THREE.BufferGeometry();
+    const starCount = 5000;
+    const positions = [];
+    for (let i = 0; i < starCount; i++) {
+      positions.push((Math.random() - 0.5) * 2000);
+      positions.push((Math.random() - 0.5) * 2000);
+      positions.push((Math.random() - 0.5) * 2000);
+    }
+    stars.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+    const starMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 1 });
+    scene.add(new THREE.Points(stars, starMaterial));
+
+    // Galaxy Clusters
+    const clusterData = [
+      { name: "Orion", x: -150, y: 50, z: -200 },
+      { name: "Lyra", x: 200, y: -100, z: -300 },
+      { name: "Nebula", x: -50, y: -150, z: -100 }
+    ];
+
+    const glowMaterial = new THREE.MeshBasicMaterial({ color: 0xd4af37 });
+    const geometry = new THREE.SphereGeometry(12, 32, 32);
+
+    clusterData.forEach((c) => {
+      const sphere = new THREE.Mesh(geometry, glowMaterial.clone());
+      sphere.position.set(c.x, c.y, c.z);
+      sphere.userData = { name: c.name };
+      scene.add(sphere);
+      clusters.push(sphere);
+    });
+
+    // Raycaster
+    raycaster = new THREE.Raycaster();
+    mouse = new THREE.Vector2();
+
+    // Events
+    canvas.addEventListener("click", onClickCluster);
+    window.addEventListener("resize", onResize);
+
+    animate();
+  }
+
+  function animate() {
+    requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+
+  function onClickCluster(event) {
+    const rect = renderer.domElement.getBoundingClientRect();
+    mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    const intersects = raycaster.intersectObjects(clusters);
+
+    if (intersects.length > 0) {
+      const cluster = intersects[0].object.userData.name;
+      console.log("Clicked:", cluster);
+      if (window.joinStar) window.joinStar(cluster);
+    }
+  }
+
+  function onResize() {
+    camera.aspect = galaxyCanvas.clientWidth / galaxyCanvas.clientHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(galaxyCanvas.clientWidth, galaxyCanvas.clientHeight);
+  }
+
+  window.addEventListener("DOMContentLoaded", initGalaxy);
+</script>
 </body>
 </html>
