@@ -5,12 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Aster Nation | Nations Among the Stars</title>
 
+  <!-- Force dark BEFORE paint -->
   <script>document.documentElement.setAttribute('data-theme','dark');</script>
 
+  <!-- Canonical + SEO -->
   <link rel="canonical" href="https://asternation.netlify.app/" />
   <meta name="description" content="Aster Nation — Mint your Star Pass, join your constellation, and represent among the stars." />
+  <meta name="color-scheme" content="dark light">
   <meta name="theme-color" content="#0b0d12" />
 
+  <!-- OG / Twitter -->
   <meta property="og:title" content="Aster Nation | Nations Among the Stars" />
   <meta property="og:description" content="Join Aster Nation. Claim your star, mint your Star Pass, and represent on-chain." />
   <meta property="og:type" content="website" />
@@ -23,12 +27,17 @@
   <meta name="twitter:image" content="https://raw.githubusercontent.com/LandoCrissian/AsterNation/refs/heads/main/06459AB6-EE5C-444D-8584-914806849C80.png" />
   <link rel="icon" href="https://raw.githubusercontent.com/LandoCrissian/AsterNation/refs/heads/main/06459AB6-EE5C-444D-8584-914806849C80.png" />
 
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+  <!-- Ethers -->
   <script defer src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+  <!-- Firebase (compat builds) -->
   <script defer src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
 
+  <!-- Three.js -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/build/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/three@0.153.0/examples/js/controls/OrbitControls.js"></script>
 
@@ -39,35 +48,52 @@
       --muted:#9ca3af;
       --line:#1f2937;
       --soft:#101320;
-      --accent:#d4af37;
+      --accent:#d4af37; /* gold */
       --accent-600:#b8860b;
     }
 
-    body{ margin:0; font-family:Inter,system-ui,sans-serif; color:var(--text); background:var(--bg); }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{ margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; color:var(--text); background:var(--bg); line-height:1.5; }
 
-    header{ position:sticky; top:0; backdrop-filter:saturate(120%) blur(8px); background: color-mix(in srgb, var(--bg) 92%, transparent); border-bottom:1px solid var(--line); z-index:10; }
+    header{ padding-top: calc(env(safe-area-inset-top, 0px)); position:sticky; top:0; backdrop-filter:saturate(120%) blur(8px); background: color-mix(in srgb, var(--bg) 92%, transparent); border-bottom:1px solid var(--line); z-index:10; }
+
+    .notice{ background:color-mix(in srgb, var(--accent) 12%, var(--bg) 88%); border-bottom:1px solid var(--line); color:var(--text); }
+    .notice .wrap{ width:min(1120px,92vw); margin:0 auto; padding:10px 0; font-weight:600; display:flex; gap:10px; align-items:center; justify-content:center; text-align:center; }
 
     .container{ width:min(1120px, 92vw); margin-inline:auto; padding:24px 0 72px; }
-    .nav{ display:flex; justify-content:space-between; align-items:center; padding:14px 0; }
+    .nav{ width:min(1120px, 92vw); margin-inline:auto; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0; }
+    .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; }
 
-    .btn{ border:1px solid var(--line); background:var(--bg); color:var(--text); padding:10px 14px; border-radius:10px; cursor:pointer; }
+    .btn{ border:1px solid var(--line); background:var(--bg); color:var(--text); padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer; transition:.12s; }
     .btn.primary{ background:var(--accent); border-color:var(--accent); color:#000; font-weight:700; }
+    .btn.primary:hover{ background:var(--accent-600); color:#fff; }
 
-    .hero{ padding:32px 0; text-align:center; }
-    .hero h1{ color:var(--accent); font-size:clamp(28px, 3.2vw + 12px, 48px); }
+    .hero{ padding:32px 0 8px; display:grid; gap:16px; align-items:center; text-align:center; }
+    .hero h1{ margin:0; font-size: clamp(28px, 3.2vw + 12px, 48px); color:var(--accent); }
+    .hero p.lead{ margin:6px auto 0; color:var(--muted); max-width:740px; }
 
-    .card{ border:1px solid var(--line); border-radius:14px; padding:16px; background:var(--soft); margin-top:24px; }
+    .stats{ margin-top:28px; display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .stat{ padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--soft); font-weight:600; text-align:center; }
+
+    /* Passport */
+    .passport{ border:1px solid var(--line); border-radius:16px; background:linear-gradient(145deg,#0b0d12,#101320); padding:16px; margin-top:12px; position:relative; overflow:hidden; }
+    .passport::before{ content:""; position:absolute; inset:0; background:url('https://raw.githubusercontent.com/LandoCrissian/AsterNation/refs/heads/main/06459AB6-EE5C-444D-8584-914806849C80.png') center/200px no-repeat; opacity:.05; }
+    .passport .info b{ font-size:18px; color:var(--accent); }
+    .passport .chip{ padding:4px 10px; border-radius:999px; background:rgba(212,175,55,.15); font-size:12px; color:var(--accent); }
   </style>
 </head>
 <body>
 
+  <div class="notice"><div class="wrap">🚀 <b>Star Pass minting is LIVE.</b> Connect your wallet and claim your star.</div></div>
+
   <header>
-    <nav class="nav container">
+    <nav class="nav">
       <a class="brand" href="#top">
         <img src="https://raw.githubusercontent.com/LandoCrissian/AsterNation/refs/heads/main/06459AB6-EE5C-444D-8584-914806849C80.png" style="width:32px;height:32px;border-radius:50%;" />
         <b>Aster Nation</b>
       </a>
-      <button id="connectBtn" class="btn">Connect Wallet</button>
+      <div class="actions"><button id="connectBtn" class="btn ghost">Connect Wallet</button></div>
     </nav>
   </header>
 
@@ -75,7 +101,14 @@
     <section class="container hero">
       <h1>Nations Among the Stars</h1>
       <p class="lead">Join Aster Nation — claim your star, mint your Star Pass, and represent your constellation on-chain.</p>
-      <button id="claimBtn" class="btn primary">Claim Your Star</button>
+      <div class="cta">
+        <button id="claimBtn" class="btn primary">Claim Your Star</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><small>Stars claimed</small><div id="stat-stars">0</div></div>
+        <div class="stat"><small>Astronauts joined</small><div id="stat-astronauts">0</div></div>
+        <div class="stat"><small>Most active constellation</small><div id="stat-top">—</div></div>
+      </div>
     </section>
 
     <!-- Galaxy Explorer -->
@@ -83,7 +116,7 @@
       <div class="card">
         <h3>Galaxy Explorer</h3>
         <div style="width:100%;height:500px;border-radius:14px;border:1px solid var(--line);overflow:hidden;">
-          <canvas id="galaxyCanvas" width="800" height="500"></canvas>
+          <canvas id="galaxyCanvas"></canvas>
         </div>
         <p style="color:var(--muted);margin-top:8px;">Explore the stars. Click a galaxy to join its constellation.</p>
       </div>
@@ -93,31 +126,78 @@
   <footer class="footer"><div class="container"><small>© <span id="year"></span> Aster Nation — Nations Among the Stars</small></div></footer>
 
   <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('year').textContent = new Date().getFullYear();
 
+      // Config
+      const LAUNCH = {
+        xHandle: 'asternation',
+        siteUrl: 'https://asternation.netlify.app',
+        token: {
+          address: '0xYOUR_ASTER_TOKEN',
+          decimals: 18,
+          minBalance: '1',
+          chainIdHex: '0x38', // BNB Chain
+          rpc: 'https://bsc-dataseed.binance.org',
+          abi: [{"constant":true,"inputs":[{"name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"type":"function"}],
+        }
+      };
+
+      // Firebase config (replace with your project)
+      const firebaseConfig = {
+        apiKey: "YOUR_FIREBASE_KEY",
+        authDomain: "asternation.firebaseapp.com",
+        projectId: "asternation",
+        storageBucket: "asternation.appspot.com",
+        messagingSenderId: "000000000000",
+        appId: "1:000000000000:web:xxxxxxxx"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+      // Join star
+      window.joinStar = async function(star){
+        const addr = window.userAddress || "0x...";
+        const serial = Math.floor(Math.random()*999999).toString().padStart(6,"0");
+        await db.collection('stars').doc(addr).set({ star, address:addr, serial, created:firebase.firestore.FieldValue.serverTimestamp() });
+        document.getElementById('passport').style.display="block";
+        document.getElementById('passport-star').textContent=star;
+        document.getElementById('passport-serial').textContent="#"+serial;
+        document.getElementById('passport-address').textContent=addr.slice(0,6)+"…"+addr.slice(-4);
+        document.getElementById('passport-nick').textContent="Astronaut";
+      };
+
+      initGalaxy();
+    });
+
+    // === THREE.JS GALAXY SCENE ===
     let scene, camera, renderer, controls, raycaster, mouse;
     let clusters = [];
 
     function initGalaxy() {
       const canvas = document.getElementById("galaxyCanvas");
-      const width = canvas.width;
-      const height = canvas.height;
+
+      const width = canvas.clientWidth || canvas.parentElement.clientWidth;
+      const height = canvas.clientHeight || 500;
 
       scene = new THREE.Scene();
 
+      // Camera
       camera = new THREE.PerspectiveCamera(60, width / height, 0.1, 2000);
       camera.position.z = 400;
 
+      // Renderer
       renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
       renderer.setSize(width, height);
       renderer.setPixelRatio(window.devicePixelRatio);
 
+      // Controls
       controls = new THREE.OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
       // Starfield
       const stars = new THREE.BufferGeometry();
-      const starCount = 3000;
+      const starCount = 5000;
       const positions = [];
       for (let i = 0; i < starCount; i++) {
         positions.push((Math.random() - 0.5) * 2000);
@@ -146,9 +226,11 @@
         clusters.push(sphere);
       });
 
+      // Raycaster
       raycaster = new THREE.Raycaster();
       mouse = new THREE.Vector2();
 
+      // Events
       canvas.addEventListener("click", onClickCluster);
       window.addEventListener("resize", onResize);
 
@@ -165,23 +247,28 @@
       const rect = renderer.domElement.getBoundingClientRect();
       mouse.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
       mouse.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
       raycaster.setFromCamera(mouse, camera);
       const intersects = raycaster.intersectObjects(clusters);
+
       if (intersects.length > 0) {
-        alert("Joined constellation: " + intersects[0].object.userData.name);
+        const cluster = intersects[0].object.userData.name;
+        console.log("Clicked:", cluster);
+        if (window.joinStar) window.joinStar(cluster);
       }
     }
 
     function onResize() {
       const canvas = document.getElementById("galaxyCanvas");
-      const width = canvas.parentElement.clientWidth;
-      const height = 500;
+      const width = canvas.clientWidth || canvas.parentElement.clientWidth;
+      const height = canvas.clientHeight || 500;
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
     }
+      
 
-    window.addEventListener("load", initGalaxy);
-  </script>
+  window.addEventListener("DOMContentLoaded", initGalaxy);
+</script>
 </body>
 </html>
