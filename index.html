@@ -19,13 +19,13 @@
   <meta property="og:description" content="Join Aster Nation. Claim your star, mint your Star Pass, and represent on-chain." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://asternation.netlify.app/" />
-  <meta property="og:image" content="https://raw.githubusercontent.com/LandoCrissian/WorldCoin/main/aster-logo.png" />
+  <meta property="og:image" content="https://raw.githubusercontent.com/LandoCrissian/AsterNation/refs/heads/main/06459AB6-EE5C-444D-8584-914806849C80.png" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="Aster Nation | Nations Among the Stars" />
   <meta name="twitter:site" content="@asternation" />
   <meta name="twitter:description" content="Join Aster Nation — one galaxy, infinite stars." />
-  <meta name="twitter:image" content="https://raw.githubusercontent.com/LandoCrissian/WorldCoin/main/aster-logo.png" />
-  <link rel="icon" href="https://raw.githubusercontent.com/LandoCrissian/WorldCoin/main/aster-logo.png" />
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/LandoCrissian/AsterNation/refs/heads/main/06459AB6-EE5C-444D-8584-914806849C80.png" />
+  <link rel="icon" href="https://raw.githubusercontent.com/LandoCrissian/AsterNation/refs/heads/main/06459AB6-EE5C-444D-8584-914806849C80.png" />
 
   <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -38,12 +38,21 @@
   <script defer src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
 
   <style>
-    :root{ --bg:#0b0d12; --text:#e5e7eb; --muted:#9ca3af; --line:#1f2937; --soft:#0f1219; --accent:#8b5cf6; --accent-600:#7c3aed; }
+    :root{
+      --bg:#0b0d12;
+      --text:#f5f5f5;
+      --muted:#9ca3af;
+      --line:#1f2937;
+      --soft:#101320;
+      --accent:#d4af37; /* gold */
+      --accent-600:#b8860b;
+    }
+
     *{ box-sizing:border-box; }
     html,body{ height:100%; }
     body{ margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; color:var(--text); background:var(--bg); line-height:1.5; }
 
-    header{ padding-top: calc(env(safe-area-inset-top, 0px)); position:sticky; top:0; backdrop-filter:saturate(120%) blur(8px); background: color-mix(in srgb, var(--bg) 86%, transparent); border-bottom:1px solid var(--line); z-index:10; }
+    header{ padding-top: calc(env(safe-area-inset-top, 0px)); position:sticky; top:0; backdrop-filter:saturate(120%) blur(8px); background: color-mix(in srgb, var(--bg) 92%, transparent); border-bottom:1px solid var(--line); z-index:10; }
 
     .notice{ background:color-mix(in srgb, var(--accent) 12%, var(--bg) 88%); border-bottom:1px solid var(--line); color:var(--text); }
     .notice .wrap{ width:min(1120px,92vw); margin:0 auto; padding:10px 0; font-weight:600; display:flex; gap:10px; align-items:center; justify-content:center; text-align:center; }
@@ -53,26 +62,27 @@
     .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; }
 
     .btn{ border:1px solid var(--line); background:var(--bg); color:var(--text); padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer; transition:.12s; }
-    .btn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
-    .btn.primary:hover{ background:var(--accent-600); }
+    .btn.primary{ background:var(--accent); border-color:var(--accent); color:#000; font-weight:700; }
+    .btn.primary:hover{ background:var(--accent-600); color:#fff; }
 
     .hero{ padding:32px 0 8px; display:grid; gap:16px; align-items:center; text-align:center; }
-    .hero h1{ margin:0; font-size: clamp(28px, 3.2vw + 12px, 48px); }
+    .hero h1{ margin:0; font-size: clamp(28px, 3.2vw + 12px, 48px); color:var(--accent); }
     .hero p.lead{ margin:6px auto 0; color:var(--muted); max-width:740px; }
 
     .stats{ margin-top:28px; display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
     .stat{ padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--soft); font-weight:600; text-align:center; }
 
-    /* === Solar System Map === */
-    #solar-system{ width:100%; height:500px; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at center, #1a1a2e, #0b0d12 80%); border-radius:14px; border:1px solid var(--line); position:relative; overflow:hidden; }
-    .orbit{ position:absolute; border:1px dashed rgba(255,255,255,.08); border-radius:50%; }
-    .planet{ width:20px; height:20px; border-radius:50%; background:var(--accent); position:absolute; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:10px; color:#fff; }
+    /* === Solar System Map Placeholder === */
+    #solar-system{ width:100%; height:500px; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at center, #141626, #0b0d12 80%); border-radius:14px; border:1px solid var(--line); position:relative; overflow:hidden; }
+    .orbit{ position:absolute; border:1px dashed rgba(255,215,0,.15); border-radius:50%; }
+    .planet{ width:22px; height:22px; border-radius:50%; background:var(--accent); position:absolute; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:11px; color:#000; font-weight:bold; box-shadow:0 0 12px rgba(212,175,55,.8); transition:.2s; }
+    .planet:hover{ transform:scale(1.2); box-shadow:0 0 20px rgba(212,175,55,1); }
 
     /* Passport */
-    .passport{ border:1px solid var(--line); border-radius:16px; background:#0d203a; padding:16px; margin-top:12px; }
-    .passport .info b{ font-size:18px; }
-    .passport .chip{ padding:4px 10px; border-radius:999px; background:rgba(255,255,255,.1); font-size:12px; }
-
+    .passport{ border:1px solid var(--line); border-radius:16px; background:linear-gradient(145deg,#0b0d12,#101320); padding:16px; margin-top:12px; position:relative; overflow:hidden; }
+    .passport::before{ content:""; position:absolute; inset:0; background:url('https://raw.githubusercontent.com/LandoCrissian/AsterNation/refs/heads/main/06459AB6-EE5C-444D-8584-914806849C80.png') center/200px no-repeat; opacity:.05; }
+    .passport .info b{ font-size:18px; color:var(--accent); }
+    .passport .chip{ padding:4px 10px; border-radius:999px; background:rgba(212,175,55,.15); font-size:12px; color:var(--accent); }
   </style>
 </head>
 <body>
@@ -81,7 +91,10 @@
 
   <header>
     <nav class="nav">
-      <a class="brand" href="#top"><img src="https://raw.githubusercontent.com/LandoCrissian/WorldCoin/main/aster-logo.png" style="width:32px;height:32px;border-radius:50%;" /><b>Aster Nation</b></a>
+      <a class="brand" href="#top">
+        <img src="https://raw.githubusercontent.com/LandoCrissian/AsterNation/refs/heads/main/06459AB6-EE5C-444D-8584-914806849C80.png" style="width:32px;height:32px;border-radius:50%;" />
+        <b>Aster Nation</b>
+      </a>
       <div class="actions"><button id="connectBtn" class="btn ghost">Connect Wallet</button></div>
     </nav>
   </header>
