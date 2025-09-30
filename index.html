@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Aster Nation | Nations Among the Stars</title>
+
+  <!-- Force dark BEFORE paint -->
+  <script>document.documentElement.setAttribute('data-theme','dark');</script>
+
+  <!-- Canonical + SEO -->
+  <link rel="canonical" href="https://asternation.netlify.app/" />
+  <meta name="description" content="Aster Nation — Mint your Star Pass, join your constellation, and represent among the stars." />
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#0b0d12" />
+
+  <!-- OG / Twitter -->
+  <meta property="og:title" content="Aster Nation | Nations Among the Stars" />
+  <meta property="og:description" content="Join Aster Nation. Claim your star, mint your Star Pass, and represent on-chain." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://asternation.netlify.app/" />
+  <meta property="og:image" content="https://raw.githubusercontent.com/LandoCrissian/WorldCoin/main/aster-logo.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Aster Nation | Nations Among the Stars" />
+  <meta name="twitter:site" content="@asternation" />
+  <meta name="twitter:description" content="Join Aster Nation — one galaxy, infinite stars." />
+  <meta name="twitter:image" content="https://raw.githubusercontent.com/LandoCrissian/WorldCoin/main/aster-logo.png" />
+  <link rel="icon" href="https://raw.githubusercontent.com/LandoCrissian/WorldCoin/main/aster-logo.png" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Ethers -->
+  <script defer src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
+
+  <!-- Firebase (compat builds) -->
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.3/firebase-app-compat.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore-compat.js"></script>
+
+  <style>
+    :root{ --bg:#0b0d12; --text:#e5e7eb; --muted:#9ca3af; --line:#1f2937; --soft:#0f1219; --accent:#8b5cf6; --accent-600:#7c3aed; }
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{ margin:0; font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif; color:var(--text); background:var(--bg); line-height:1.5; }
+
+    header{ padding-top: calc(env(safe-area-inset-top, 0px)); position:sticky; top:0; backdrop-filter:saturate(120%) blur(8px); background: color-mix(in srgb, var(--bg) 86%, transparent); border-bottom:1px solid var(--line); z-index:10; }
+
+    .notice{ background:color-mix(in srgb, var(--accent) 12%, var(--bg) 88%); border-bottom:1px solid var(--line); color:var(--text); }
+    .notice .wrap{ width:min(1120px,92vw); margin:0 auto; padding:10px 0; font-weight:600; display:flex; gap:10px; align-items:center; justify-content:center; text-align:center; }
+
+    .container{ width:min(1120px, 92vw); margin-inline:auto; padding:24px 0 72px; }
+    .nav{ width:min(1120px, 92vw); margin-inline:auto; display:flex; align-items:center; justify-content:space-between; gap:16px; padding:14px 0; }
+    .brand{ display:flex; align-items:center; gap:10px; text-decoration:none; color:inherit; }
+
+    .btn{ border:1px solid var(--line); background:var(--bg); color:var(--text); padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer; transition:.12s; }
+    .btn.primary{ background:var(--accent); border-color:var(--accent); color:#fff; }
+    .btn.primary:hover{ background:var(--accent-600); }
+
+    .hero{ padding:32px 0 8px; display:grid; gap:16px; align-items:center; text-align:center; }
+    .hero h1{ margin:0; font-size: clamp(28px, 3.2vw + 12px, 48px); }
+    .hero p.lead{ margin:6px auto 0; color:var(--muted); max-width:740px; }
+
+    .stats{ margin-top:28px; display:grid; gap:14px; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); }
+    .stat{ padding:14px; border:1px solid var(--line); border-radius:12px; background:var(--soft); font-weight:600; text-align:center; }
+
+    /* === Solar System Map === */
+    #solar-system{ width:100%; height:500px; display:flex; align-items:center; justify-content:center; background:radial-gradient(circle at center, #1a1a2e, #0b0d12 80%); border-radius:14px; border:1px solid var(--line); position:relative; overflow:hidden; }
+    .orbit{ position:absolute; border:1px dashed rgba(255,255,255,.08); border-radius:50%; }
+    .planet{ width:20px; height:20px; border-radius:50%; background:var(--accent); position:absolute; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:10px; color:#fff; }
+
+    /* Passport */
+    .passport{ border:1px solid var(--line); border-radius:16px; background:#0d203a; padding:16px; margin-top:12px; }
+    .passport .info b{ font-size:18px; }
+    .passport .chip{ padding:4px 10px; border-radius:999px; background:rgba(255,255,255,.1); font-size:12px; }
+
+  </style>
+</head>
+<body>
+
+  <div class="notice"><div class="wrap">🚀 <b>Star Pass minting is LIVE.</b> Connect your wallet and claim your star.</div></div>
+
+  <header>
+    <nav class="nav">
+      <a class="brand" href="#top"><img src="https://raw.githubusercontent.com/LandoCrissian/WorldCoin/main/aster-logo.png" style="width:32px;height:32px;border-radius:50%;" /><b>Aster Nation</b></a>
+      <div class="actions"><button id="connectBtn" class="btn ghost">Connect Wallet</button></div>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="container hero">
+      <h1>Nations Among the Stars</h1>
+      <p class="lead">Join Aster Nation — claim your star, mint your Star Pass, and represent your constellation on-chain.</p>
+      <div class="cta">
+        <button id="claimBtn" class="btn primary">Claim Your Star</button>
+      </div>
+      <div class="stats">
+        <div class="stat"><small>Stars claimed</small><div id="stat-stars">0</div></div>
+        <div class="stat"><small>Astronauts joined</small><div id="stat-astronauts">0</div></div>
+        <div class="stat"><small>Most active constellation</small><div id="stat-top">—</div></div>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="card">
+        <h3>Solar System Map</h3>
+        <div id="solar-system">
+          <div class="orbit" style="width:300px;height:300px;"></div>
+          <div class="orbit" style="width:200px;height:200px;"></div>
+          <div class="planet" style="top:50%;left:70%;" onclick="joinStar('Orion')">O</div>
+          <div class="planet" style="top:20%;left:40%;" onclick="joinStar('Nebula')">N</div>
+          <div class="planet" style="top:70%;left:30%;" onclick="joinStar('Lyra')">L</div>
+        </div>
+        <p style="color:var(--muted);margin-top:8px;">Choose a star to join its constellation.</p>
+      </div>
+    </section>
+
+    <section class="container">
+      <div class="card">
+        <h3>Your Star Pass</h3>
+        <div id="passport" class="passport" style="display:none;">
+          <div class="info">
+            <b>Aster Star Pass <span id="passport-serial">#000000</span></b>
+            <small><span id="passport-nick">—</span> — <span id="passport-star">—</span> <span id="passport-address" class="chip">—</span></small>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer"><div class="container"><small>© <span id="year"></span> Aster Nation — Nations Among the Stars</small></div></footer>
+
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('year').textContent = new Date().getFullYear();
+
+      // Config
+      const LAUNCH = {
+        xHandle: 'asternation',
+        siteUrl: 'https://asternation.netlify.app',
+        token: {
+          address: '0xYOUR_ASTER_TOKEN',
+          decimals: 18,
+          minBalance: '1',
+          chainIdHex: '0x38', // BNB Chain
+          rpc: 'https://bsc-dataseed.binance.org',
+          abi: [{"constant":true,"inputs":[{"name":"owner","type":"address"}],"name":"balanceOf","outputs":[{"name":"","type":"uint256"}],"type":"function"}],
+        }
+      };
+
+      // Firebase config (replace with your project)
+      const firebaseConfig = {
+        apiKey: "YOUR_FIREBASE_KEY",
+        authDomain: "asternation.firebaseapp.com",
+        projectId: "asternation",
+        storageBucket: "asternation.appspot.com",
+        messagingSenderId: "000000000000",
+        appId: "1:000000000000:web:xxxxxxxx"
+      };
+      firebase.initializeApp(firebaseConfig);
+      const db = firebase.firestore();
+
+      // Join star
+      window.joinStar = async function(star){
+        const addr = window.userAddress || "0x...";
+        const serial = Math.floor(Math.random()*999999).toString().padStart(6,"0");
+        await db.collection('stars').doc(addr).set({ star, address:addr, serial, created:firebase.firestore.FieldValue.serverTimestamp() });
+        document.getElementById('passport').style.display="block";
+        document.getElementById('passport-star').textContent=star;
+        document.getElementById('passport-serial').textContent="#"+serial;
+        document.getElementById('passport-address').textContent=addr.slice(0,6)+"…"+addr.slice(-4);
+        document.getElementById('passport-nick').textContent="Astronaut";
+      };
+    });
+  </script>
+</body>
+</html>
