@@ -266,13 +266,14 @@
       camera.updateProjectionMatrix();
       renderer.setSize(width, height);
     }
-  </script>
-</body>
-</html>tion onResize() {
-    camera.aspect = galaxyCanvas.clientWidth / galaxyCanvas.clientHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(galaxyCanvas.clientWidth, galaxyCanvas.clientHeight);
-  }
+      function onResize() {
+      const canvas = document.getElementById("galaxyCanvas");
+      const width = canvas.clientWidth || canvas.parentElement.clientWidth;
+      const height = canvas.clientHeight || 500;
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+      renderer.setSize(width, height);
+    }
 
   window.addEventListener("DOMContentLoaded", initGalaxy);
 </script>
