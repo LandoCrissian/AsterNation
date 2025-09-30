@@ -11,7 +11,6 @@
   <meta name="theme-color" content="#0b0d12" />
   <link rel="icon" href="https://raw.githubusercontent.com/LandoCrissian/AsterNation/refs/heads/main/06459AB6-EE5C-444D-8584-914806849C80.png" />
 
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Three.js -->
@@ -20,45 +19,29 @@
 
   <style>
     :root{
-      --bg:#0b0d12;
-      --text:#f5f5f5;
-      --muted:#9ca3af;
-      --line:#1f2937;
-      --soft:#101320;
-      --accent:#d4af37;
-      --accent-600:#b8860b;
+      --bg:#0b0d12; --text:#f5f5f5; --muted:#9ca3af;
+      --line:#1f2937; --soft:#101320;
+      --accent:#d4af37; --accent-600:#b8860b;
     }
 
-    body { margin:0; font-family:Inter,system-ui,sans-serif; color:var(--text); background:var(--bg); overflow-x:hidden; }
-    header { padding:12px 20px; border-bottom:1px solid var(--line); position:sticky; top:0; background:rgba(11,13,18,.9); backdrop-filter:blur(8px); z-index:50; display:flex; justify-content:space-between; align-items:center; }
-    header img { width:32px; height:32px; border-radius:50%; }
-    header b { margin-left:8px; color:var(--accent); }
+    body{margin:0;font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;}
+    header{padding:12px 20px;border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(11,13,18,.9);backdrop-filter:blur(8px);z-index:50;display:flex;justify-content:space-between;align-items:center;}
+    header img{width:32px;height:32px;border-radius:50%;}
+    header b{margin-left:8px;color:var(--accent);}
+    h1{text-align:center;font-size:clamp(28px,3vw,42px);color:var(--accent);margin:20px 0;}
+    p.lead{text-align:center;color:var(--muted);margin-bottom:20px;}
+    #galaxyCanvas{width:100%;height:100vh;display:block;}
 
-    main { width:100%; margin:0 auto; padding:0; }
-    h1 { font-size:clamp(28px,3vw,42px); color:var(--accent); text-align:center; margin:20px 0; }
-    p.lead { color:var(--muted); text-align:center; max-width:700px; margin:0 auto 30px; }
+    /* Drawer */
+    #drawer{position:fixed;top:0;right:-400px;width:400px;max-width:100%;height:100%;background:var(--soft);box-shadow:-4px 0 12px rgba(0,0,0,0.6);transition:right .3s ease;z-index:100;padding:20px;display:flex;flex-direction:column;}
+    #drawer.active{right:0;}
+    #drawer h2{margin:0 0 10px;color:var(--accent);}
+    #drawer p{color:var(--muted);}
+    #drawer button{margin-top:auto;padding:12px;border:none;border-radius:8px;font-weight:700;cursor:pointer;background:var(--accent);color:#000;transition:.2s;}
+    #drawer button:hover{background:var(--accent-600);color:#fff;}
+    #drawerClose{position:absolute;top:10px;right:14px;font-size:20px;cursor:pointer;}
 
-    .galaxy-wrapper { position:relative; width:100%; height:70vh; min-height:400px; border-top:1px solid var(--line); border-bottom:1px solid var(--line); }
-    #galaxyCanvas { width:100%; height:100%; display:block; }
-
-    /* Side Drawer */
-    #drawer {
-      position:fixed; top:0; right:-400px; width:360px; max-width:90%; height:100%;
-      background:var(--soft); box-shadow:-4px 0 12px rgba(0,0,0,0.6);
-      transition:right 0.35s ease; z-index:100;
-      display:flex; flex-direction:column; padding:24px;
-    }
-    #drawer.active { right:0; }
-    #drawer h2 { margin:0 0 10px; color:var(--accent); font-size:22px; }
-    #drawer p { color:var(--muted); line-height:1.5; }
-    #drawer button { margin-top:auto; padding:12px; border:none; border-radius:8px; font-weight:700; cursor:pointer;
-      background:var(--accent); color:#000; transition:.2s; }
-    #drawer button:hover { background:var(--accent-600); color:#fff; }
-    #drawerClose { position:absolute; top:10px; right:14px; font-size:22px; cursor:pointer; color:var(--text); }
-
-    @media(max-width:640px){
-      #drawer { width:100%; }
-    }
+    @media(max-width:640px){#drawer{width:100%;}}
   </style>
 </head>
 <body>
@@ -67,18 +50,12 @@
       <img src="https://raw.githubusercontent.com/LandoCrissian/AsterNation/refs/heads/main/06459AB6-EE5C-444D-8584-914806849C80.png" alt="Aster Nation"/>
       <b>Aster Nation</b>
     </div>
-    <button id="connectBtn" class="btn">Connect Wallet</button>
+    <button id="connectBtn">Connect Wallet</button>
   </header>
 
-  <main>
-    <h1>Nations Among the Stars</h1>
-    <p class="lead">Explore galaxies, join constellations, and represent on-chain.</p>
-    <div class="galaxy-wrapper">
-      <canvas id="galaxyCanvas"></canvas>
-    </div>
-  </main>
+  <canvas id="galaxyCanvas"></canvas>
 
-  <!-- Side Drawer -->
+  <!-- Drawer -->
   <div id="drawer">
     <span id="drawerClose">✖</span>
     <h2 id="drawerTitle">Constellation</h2>
@@ -88,84 +65,94 @@
   </div>
 
   <script>
-    const CONSTELLATIONS = [
-      { name:"Orion", desc:"The hunter of the stars.", count:42, pos:{x:-150,y:50,z:-200} },
-      { name:"Lyra", desc:"The harp that sings through galaxies.", count:31, pos:{x:200,y:-100,z:-300} },
-      { name:"Nebula", desc:"The birthplace of new stars.", count:57, pos:{x:-50,y:-150,z:-100} },
+    const CONSTELLATIONS=[
+      {name:"Orion",desc:"The hunter of the stars.",count:42,pos:{x:-150,y:50,z:-200}},
+      {name:"Lyra",desc:"The harp that sings through galaxies.",count:31,pos:{x:200,y:-100,z:-300}},
+      {name:"Nebula",desc:"The birthplace of new stars.",count:57,pos:{x:-50,y:-150,z:-100}},
     ];
 
-    let scene,camera,renderer,controls,raycaster,mouse,starfield;
-    let clusters=[];
+    let scene,camera,renderer,controls,raycaster,mouse;
+    let clusters=[],warpLines=[];let warpActive=false;let warpStart=0;
 
     function initGalaxy(){
       const canvas=document.getElementById("galaxyCanvas");
       scene=new THREE.Scene();
+      const width=window.innerWidth,height=window.innerHeight;
 
-      // Camera
-      const width=canvas.clientWidth, height=canvas.clientHeight;
-      camera=new THREE.PerspectiveCamera(60,width/height,0.1,2000);
-      camera.position.z=500;
+      camera=new THREE.PerspectiveCamera(60,width/height,0.1,5000);
+      camera.position.z=localStorage.getItem("hyperspacePlayed")?400:2000;
 
-      // Renderer
-      renderer=new THREE.WebGLRenderer({canvas:canvas,antialias:true});
+      renderer=new THREE.WebGLRenderer({canvas,antialias:true});
       renderer.setSize(width,height);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
 
-      // Controls
       controls=new THREE.OrbitControls(camera,renderer.domElement);
       controls.enableDamping=true;
 
-      // Background gradient
-      const bgTex=new THREE.CanvasTexture(generateBGGradient());
-      scene.background=bgTex;
-
       // Stars
       const starGeo=new THREE.BufferGeometry();
-      const starCount=5000; const pos=[];
-      for(let i=0;i<starCount;i++){
-        pos.push((Math.random()-0.5)*3000);
-        pos.push((Math.random()-0.5)*3000);
-        pos.push((Math.random()-0.5)*3000);
-      }
+      const starCount=4000;const pos=[];
+      for(let i=0;i<starCount;i++){pos.push((Math.random()-0.5)*4000,(Math.random()-0.5)*4000,(Math.random()-0.5)*4000);}
       starGeo.setAttribute("position",new THREE.Float32BufferAttribute(pos,3));
-      const starMat=new THREE.PointsMaterial({color:0xffffff,size:1});
-      starfield=new THREE.Points(starGeo,starMat);
-      scene.add(starfield);
+      scene.add(new THREE.Points(starGeo,new THREE.PointsMaterial({color:0xffffff,size:1})));
 
-      // Constellations
+      // Clusters
       const glowMat=new THREE.MeshBasicMaterial({color:0xd4af37});
-      const geom=new THREE.SphereGeometry(14,32,32);
+      const geom=new THREE.SphereGeometry(12,32,32);
       CONSTELLATIONS.forEach(c=>{
         const sphere=new THREE.Mesh(geom,glowMat.clone());
-        sphere.position.set(c.pos.x,c.pos.y,c.pos.z);
-        sphere.userData=c;
-        scene.add(sphere);
-        clusters.push(sphere);
+        sphere.position.set(c.pos.x,c.pos.y,c.pos.z);sphere.userData=c;
+        scene.add(sphere);clusters.push(sphere);
 
         // Label
         const canvasLabel=document.createElement("canvas");
-        canvasLabel.width=256; canvasLabel.height=64;
+        canvasLabel.width=256;canvasLabel.height=64;
         const ctx=canvasLabel.getContext("2d");
-        ctx.font="28px Inter"; ctx.fillStyle="#d4af37"; ctx.fillText(c.name,20,40);
+        ctx.font="28px Inter";ctx.fillStyle="#d4af37";ctx.fillText(c.name,10,40);
         const tex=new THREE.CanvasTexture(canvasLabel);
         const sprite=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,transparent:true}));
-        sprite.position.set(c.pos.x,c.pos.y+28,c.pos.z);
-        sprite.scale.set(120,60,1);
+        sprite.position.set(c.pos.x,c.pos.y+25,c.pos.z);sprite.scale.set(100,40,1);
         scene.add(sprite);
       });
 
-      raycaster=new THREE.Raycaster(); mouse=new THREE.Vector2();
+      raycaster=new THREE.Raycaster();mouse=new THREE.Vector2();
       canvas.addEventListener("click",onClickCluster);
       window.addEventListener("resize",onResize);
+
+      // Hyperspace effect
+      if(!localStorage.getItem("hyperspacePlayed")){
+        warpActive=true;warpStart=performance.now();
+        createWarpLines();
+      }
 
       animate();
     }
 
-    function animate(){ 
+    function createWarpLines(){
+      const material=new THREE.LineBasicMaterial({color:0xffffff});
+      for(let i=0;i<500;i++){
+        const geometry=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3((Math.random()-0.5)*2000,(Math.random()-0.5)*2000,(Math.random()-0.5)*2000),(Math.random()-0.5)*2000,(Math.random()-0.5)*2000,(Math.random()-0.5)*2000]);
+        const line=new THREE.Line(geometry,material);
+        scene.add(line);warpLines.push(line);
+      }
+    }
+
+    function animate(t){
       requestAnimationFrame(animate);
-      starfield.rotation.y += 0.0005; // subtle rotation
-      controls.update(); 
-      renderer.render(scene,camera); 
+      controls.update();
+
+      if(warpActive){
+        const elapsed=(t-warpStart)/2000; // 2s warp
+        camera.position.z=2000-(1600*Math.min(elapsed,1));
+        warpLines.forEach(l=>l.material.opacity=1-elapsed);
+        if(elapsed>=1){
+          warpActive=false;
+          warpLines.forEach(l=>scene.remove(l));
+          localStorage.setItem("hyperspacePlayed","true");
+        }
+      }
+
+      renderer.render(scene,camera);
     }
 
     function onClickCluster(event){
@@ -174,7 +161,7 @@
       mouse.y=-((event.clientY-rect.top)/rect.height)*2+1;
       raycaster.setFromCamera(mouse,camera);
       const hits=raycaster.intersectObjects(clusters);
-      if(hits.length>0){ openDrawer(hits[0].object.userData); }
+      if(hits.length>0){openDrawer(hits[0].object.userData);}
     }
 
     function openDrawer(data){
@@ -182,32 +169,13 @@
       document.getElementById("drawerDesc").textContent=data.desc;
       document.getElementById("drawerCount").textContent=data.count;
       document.getElementById("drawer").classList.add("active");
-
-      document.getElementById("joinBtn").onclick=()=>{
-        console.log("✅ Would join constellation:",data.name);
-        data.count++;
-        document.getElementById("drawerCount").textContent=data.count;
-      };
+      document.getElementById("joinBtn").onclick=()=>{data.count++;document.getElementById("drawerCount").textContent=data.count;};
     }
 
     function onResize(){
-      const canvas=document.getElementById("galaxyCanvas");
-      const width=canvas.clientWidth, height=canvas.clientHeight;
-      camera.aspect=width/height;
+      camera.aspect=window.innerWidth/window.innerHeight;
       camera.updateProjectionMatrix();
-      renderer.setSize(width,height);
-    }
-
-    function generateBGGradient(){
-      const canvas=document.createElement("canvas");
-      canvas.width=16; canvas.height=512;
-      const ctx=canvas.getContext("2d");
-      const grad=ctx.createLinearGradient(0,0,0,512);
-      grad.addColorStop(0,"#0b0d12");
-      grad.addColorStop(1,"#101320");
-      ctx.fillStyle=grad;
-      ctx.fillRect(0,0,16,512);
-      return canvas;
+      renderer.setSize(window.innerWidth,window.innerHeight);
     }
 
     document.getElementById("drawerClose").onclick=()=>{document.getElementById("drawer").classList.remove("active");};
